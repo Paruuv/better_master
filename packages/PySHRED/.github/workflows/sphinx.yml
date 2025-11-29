@@ -1,0 +1,49 @@
+name: "Sphinx: Render docs"
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r docs/requirements.txt
+      - name: Install your package
+        run: pip install -e .
+      - name: Build multiversion docs
+        run: |
+          sphinx-multiversion docs/source docs/build/html
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-docs
+          path: docs/build/html/
+      - name: Add root index.html
+        run: |
+          cp docs/source/index.html docs/build/html/index.html
+      - name: Copy latest version to stable
+        run: |
+          # Get the latest version directory dynamically
+          LATEST_VERSION=$(ls -1 docs/build/html/ | grep '^v[0-9]' | sort -V | tail -1)
+          echo "Latest version detected: $LATEST_VERSION"
+          mkdir -p docs/build/html/stable
+          cp -r docs/build/html/$LATEST_VERSION/* docs/build/html/stable/
+      - name: Deploy docs (all versions + stable alias)
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/build/html
+          force_orphan: true

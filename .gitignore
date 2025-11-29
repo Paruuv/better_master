@@ -1,0 +1,36 @@
+cylALL.mat
+Code_update.rar
+CYLINDER_basis.mat
+Wave_data/test_1/X_data.npy
+Wave_data/test_1/targets.npy
+Wave_data/data_1_test.npy
+Wave_data/data_1.npy
+wave_animation.gif
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# System files
+.DS_Store
+Thumbs.db
+*.egg-info/
+
+# VSCode / IDE settings
+.vscode/
+.idea/
+
+*.png
+*.gif
+*.npy
+*.csv
